@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>2048</title>
+
+    <link href="style/main.css" rel="stylesheet" type="text/css">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport"
+          content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+<div class="container">
+    <div class="heading">
+        <h1 class="title">2048</h1>
+        <div class="scores-container">
+            <div class="score-container">0</div>
+        </div>
+    </div>
+
+    <div class="prev-game-board">
+        <div class="grid-container">
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+        </div>
+
+        <div class="tile-container"></div>
+    </div>
+    <div class="actions-upon-transition">
+        <img src="pics/up_arrow.png" class="move-up">
+        <img src="pics/right_arrow.png" class="move-right">
+        <img src="pics/down_arrow.png" class="move-down">
+        <img src="pics/left_arrow.png" class="move-left">
+    </div>
+    <div class="game-board">
+        <div class="grid-container">
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+            <div class="grid-row">
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+                <div class="grid-cell"></div>
+            </div>
+        </div>
+
+        <div class="tile-container"></div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!--<script src="js/src/view-logic/classlist_polyfill.js"></script>-->
+<!--<script src="js/src/view-logic/animframe_polyfill.js"></script>-->
+<!--<script src="js/src/view-logic/html_actuator.js"></script>-->
+<script src="js/src/game-logic/board.js"></script>
+<script src="js/src/game-logic/tile.js"></script>
+<script src="js/src/game-logic/game_referee.js"></script>
+<!--<script src="js/src/view-logic/application.js"></script>-->
+
+</body>
+</html>
