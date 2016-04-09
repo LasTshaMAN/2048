@@ -93,101 +93,46 @@ describe("GameReferee", function () {
             gameReferee.makeMoveOnBoard("up", board);
         });
 
-        describe("should shift the tile properly:", function () {
-            it("tile_0_0", function () {
-                expect(board.tileIn({x: 0, y: 0})).toEqual(tile_0_0);
-            });
-
-            it("tile_2_0", function () {
-                expect(board.tileIn({x: 1, y: 0})).toEqual(tile_2_0);
-            });
-
-            it("tile_2_2", function () {
-                expect(board.tileIn({x: 1, y: 2})).toEqual(tile_2_2);
-            });
-
-            it("tile_3_2", function () {
-                expect(board.tileIn({x: 2, y: 2})).toEqual(tile_3_2);
-            });
-
-            it("tile_2_3", function () {
-                expect(board.tileIn({x: 1, y: 3})).toEqual(tile_2_3);
-            });
-
-            it("tile_3_3", function () {
-                expect(board.tileIn({x: 2, y: 3})).toEqual(tile_3_3);
-            });
+        it("should shift the tile properly", function () {
+            expect(board.tileIn({x: 0, y: 0})).toEqual(tile_0_0);
+            expect(board.tileIn({x: 1, y: 0})).toEqual(tile_2_0);
+            expect(board.tileIn({x: 1, y: 2})).toEqual(tile_2_2);
+            expect(board.tileIn({x: 2, y: 2})).toEqual(tile_3_2);
+            expect(board.tileIn({x: 1, y: 3})).toEqual(tile_2_3);
+            expect(board.tileIn({x: 2, y: 3})).toEqual(tile_3_3);
         });
 
-        describe("shouldn't merge tiles with different values:", function () {
-            it("tile_0_0", function () {
-                expect(tile_0_0.wasMerged()).toBeFalsy();
-            });
-
-            it("tile_2_2", function () {
-                expect(tile_2_2.wasMerged()).toBeFalsy();
-            });
-
-            it("tile_1_3", function () {
-                expect(tile_1_3.wasMerged()).toBeFalsy();
-            });
+        it("shouldn't merge tiles with different values", function () {
+            expect(tile_0_0.value).toEqual(8);
+            expect(tile_2_2.value).toEqual(4);
+            expect(tile_1_3.value).toEqual(2);
         });
 
-        describe("should merge distant tiles with the same value if tile to merge with is fixed", function () {
-            it("tile_0_1", function () {
-                expect(tile_0_1.wasMerged()).toBeTruthy();
-            });
+        it("should merge distant tiles with the same value if tile to merge with is fixed", function () {
+            expect(tile_0_1.value).toEqual(4);
         });
 
-        describe("should merge adjacent tiles with the same value", function () {
-            it("tile_0_2", function () {
-                expect(tile_0_2.wasMerged()).toBeTruthy();
-            });
-            it("tile_0_3", function () {
-                expect(tile_0_3.wasMerged()).toBeTruthy();
-            });
+        it("should merge adjacent tiles with the same value", function () {
+            expect(tile_0_2.value).toEqual(8);
+            expect(tile_0_3.value).toEqual(4);
         });
 
-        describe("shouldn't merge adjacent tiles with the same value if the tile ahead is going to merge with another tile", function () {
-            it("tile_1_2", function () {
-                expect(tile_1_2.wasMerged()).toBeFalsy();
-            });
+        it("shouldn't merge adjacent tiles with the same value if the tile ahead is going to merge with another tile", function () {
+            expect(tile_1_2.value).toEqual(4);
         });
 
-        describe("shouldn't merge adjacent tiles with the same value if the tile ahead is going to move", function () {
-            it("tile_2_3", function () {
-                expect(tile_2_3.wasMerged()).toBeFalsy();
-            });
+        it("shouldn't merge adjacent tiles with the same value if the tile ahead is going to move", function () {
+            expect(tile_2_3.value).toEqual(16);
         });
 
-        describe("new tiles shouldn't appear out of nowhere", function () {
-            it("tile_2_0", function () {
-                expect(board.occupied({x: 2, y: 0})).toBeFalsy();
-            });
-
-            it("tile_3_0", function () {
-                expect(board.occupied({x: 3, y: 0})).toBeFalsy();
-            });
-
-            it("tile_1_1", function () {
-                expect(board.occupied({x: 1, y: 1})).toBeFalsy();
-            });
-
-            it("tile_2_1", function () {
-                expect(board.occupied({x: 2, y: 1})).toBeFalsy();
-            });
-
-            it("tile_3_1", function () {
-                expect(board.occupied({x: 3, y: 1})).toBeFalsy();
-            });
-
-            it("tile_3_2", function () {
-                expect(board.occupied({x: 3, y: 2})).toBeFalsy();
-            });
-
-            it("tile_3_3", function () {
-                expect(board.occupied({x: 3, y: 3})).toBeFalsy();
-            });
+        it("new tiles shouldn't appear out of nowhere", function () {
+            expect(board.occupied({x: 2, y: 0})).toBeFalsy();
+            expect(board.occupied({x: 3, y: 0})).toBeFalsy();
+            expect(board.occupied({x: 1, y: 1})).toBeFalsy();
+            expect(board.occupied({x: 2, y: 1})).toBeFalsy();
+            expect(board.occupied({x: 3, y: 1})).toBeFalsy();
+            expect(board.occupied({x: 3, y: 2})).toBeFalsy();
+            expect(board.occupied({x: 3, y: 3})).toBeFalsy();
         });
     });
 });

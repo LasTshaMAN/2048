@@ -30,7 +30,7 @@ Board.prototype.tileIn = function (cell) {
     return this._cells[cell.x][cell.y];
 };
 
-Board.prototype.removeTileFromCell = function (tile, cell) {
+Board.prototype.removeTileFromCell = function (cell) {
     this._cells[cell.x][cell.y] = null;
 };
 

@@ -86,9 +86,9 @@ GameReferee.prototype._cellFitsWithinBoardBounds = function (cell, board) {
 
 GameReferee.prototype.makeMoveOnBoard = function (move, board) {
     var shiftDirection = this._getDirectionVectorBasedOn(move);
-    var cellSequence = this._buildOrderedCellSequenceBasedOn(shiftDirection, board.size);
+    var cellSequences = this._buildOrderedCellSequencesBasedOn(shiftDirection, board.size);
 
-    var boardStateChanged = this._tryToChangeBoardStateAccordingTo(cellSequence, shiftDirection, board);
+    var boardStateChanged = this._tryToChangeBoardStateAccordingTo(cellSequences, shiftDirection, board);
 
     // if (!boardStateChanged) {
     //     throw {
@@ -99,76 +99,101 @@ GameReferee.prototype.makeMoveOnBoard = function (move, board) {
 
 GameReferee.prototype._getDirectionVectorBasedOn = function (action) {
     var map = {
-        "up": {x: 0, y: 1},
-        "right": {x: 1, y: 0},
-        "down": {x: 0, y: -1},
-        "left": {x: -1, y: 0}
+        "up": {x: -1, y: 0},
+        "right": {x: 0, y: 1},
+        "down": {x: 1, y: 0},
+        "left": {x: 0, y: -1}
     };
 
     return map[action];
 };
 
-GameReferee.prototype._buildOrderedCellSequenceBasedOn = function (shiftDirection, boardSize) {
-    var rows = this._generateListOfNumberInRange(0, boardSize - 1);
-    var columns = this._generateListOfNumberInRange(0, boardSize - 1);
+GameReferee.prototype._buildOrderedCellSequencesBasedOn = function (shiftDirection, boardSize) {
+    var result = [];
+    for (var i = 0; i < boardSize; i++) {
+        result[i] = [];
+    }
 
+    var x;
+    var y;
+
+    if (shiftDirection.x === -1) {
+        for (x = 0; x < boardSize; x++) {
+            for (y = 0; y < boardSize; y++) {
+                result[y][x] = {
+                    x: x,
+                    y: y
+                };
+            }
+        }
+    }
     if (shiftDirection.x === 1) {
-        columns = columns.reverse();
+        for (x = boardSize - 1; x >= 0; x--) {
+            for (y = 0; y < boardSize; y++) {
+                result[y][x] = {
+                    x: x,
+                    y: y
+                };
+            }
+        }
     }
     if (shiftDirection.y === -1) {
-        rows = rows.reverse();
+        for (x = 0; x < boardSize; x++) {
+            for (y = 0; y < boardSize; y++) {
+                result[x][y] = {
+                    x: x,
+                    y: y
+                };
+            }
+        }
+    }
+    if (shiftDirection.y === 1) {
+        for (x = 0; x < boardSize; x++) {
+            for (y = boardSize - 1; y >= 0; y--) {
+                result[x][y] = {
+                    x: x,
+                    y: y
+                };
+            }
+        }
     }
 
-    var result = [];
-    rows.forEach(function (x) {
-        columns.forEach(function (y) {
-            result.push({
-                x: x,
-                y: y
-            });
-        });
-    });
     return result;
 };
 
-GameReferee.prototype._generateListOfNumberInRange = function (min, max) {
-    var result = [];
-
-    for (var number = min; number <= max; ++number) {
-        result.push(number);
-    }
-
-    return result;
-};
-
-GameReferee.prototype._tryToChangeBoardStateAccordingTo = function (cellSequence, shiftDirection, board) {
+GameReferee.prototype._tryToChangeBoardStateAccordingTo = function (cellSequences, shiftDirection, board) {
     var self = this;
 
     var managedToChangeBoardState = false;
 
-    cellSequence.forEach(function (cell) {
+    cellSequences.forEach(function (cellSequence) {
+        var tilesMerged = false;
+        
+        cellSequence.forEach(function (cell) {
+            if (board.occupied(cell)) {
+                var trajectory = self._planTrajectoryFor(cell, shiftDirection, board);
 
-        if (board.occupied(cell)) {
-            var trajectory = self._planTrajectoryFor(cell, shiftDirection, board);
+                var shouldTryToMove = true;
+                if (trajectory.tileToCrashWithExists) {
+                    var tile = board.tileIn(cell);
+                    var tileToCrashWith = board.tileIn(trajectory.occupiedCell);
 
-            var tilesMerged = false;
-            if (trajectory.tileToCrashWithExists) {
-                var tile = board.tileIn(cell);
-                var tileToCrashWith = board.tileIn(trajectory.occupiedCell);
+                    if (!tilesMerged && self._shouldMergeTiles(tile, tileToCrashWith)) {
+                        tileToCrashWith.mergeWith(tile);
+                        board.removeTileFromCell(cell);
 
-                if (self._shouldMergeTiles(tile, tileToCrashWith)) {
-                    self._mergeTilesOnBoard(tile, tileToCrashWith, board);
+                        shouldTryToMove = false;
+                        tilesMerged = true;
+                        managedToChangeBoardState = true;
+                    }
+                }
+                if (shouldTryToMove && trajectory.thereIsEnoughRoomToMove) {
+                    self._moveTileFromTo(cell, trajectory.farthestAvailableCell, board);
 
-                    tilesMerged = true;
                     managedToChangeBoardState = true;
                 }
             }
-            if (!tilesMerged && trajectory.thereIsEnoughRoomToMove) {
-                self._moveTileFromTo(cell, trajectory.farthestAvailableCell, board);
-
-                managedToChangeBoardState = true;
-            }
-        }
+        });
     });
 
     return managedToChangeBoardState;
@@ -213,12 +238,7 @@ GameReferee.prototype._nextCell = function (cell, shiftDirection) {
 };
 
 GameReferee.prototype._shouldMergeTiles = function (tile, tileToCrashWith) {
-    return !tileToCrashWith.wasMerged() && tileToCrashWith.value === tile.value;
-};
-
-GameReferee.prototype._mergeTilesOnBoard = function (tile, tileToMergeWith, board) {
-    tileToMergeWith.mergeWith(tile);
-    board.removeTileFromCell(cell);
+    return tileToCrashWith.value === tile.value;
 };
 
 GameReferee.prototype._moveTileFromTo = function (cellFrom, cellTo, board) {

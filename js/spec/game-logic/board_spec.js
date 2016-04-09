@@ -41,7 +41,7 @@ describe("Board", function () {
         });
 
         it("I should be able to successfully remove that tile from the cell it occupies", function () {
-            board.removeTileFromCell(tile, cell);
+            board.removeTileFromCell(cell);
             expect(board.occupied(cell)).toBeFalsy();
         });
     });

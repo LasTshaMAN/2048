@@ -19,10 +19,6 @@ describe("Tile", function () {
         expect(tile.sameAs(anotherTile)).toBeFalsy();
     });
 
-    it("shouldn't be a 'merged' tile by default", function () {
-        expect(tile.wasMerged()).toBeFalsy();
-    });
-
     describe("when merged with another tile", function () {
         var anotherTile;
 
@@ -33,15 +29,6 @@ describe("Tile", function () {
 
         it("should sum up the values for both tiles", function () {
             expect(tile.value).toEqual(6);
-        });
-
-        it("should indicate that it just merged with another tile", function () {
-            expect(tile.wasMerged()).toBeTruthy();
-        });
-
-        it("should become genuine as opposed to merged once we checked its state", function () {
-            expect(tile.wasMerged()).toBeTruthy();
-            expect(tile.wasMerged()).toBeFalsy();
         });
     });
 });
