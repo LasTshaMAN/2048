@@ -84,7 +84,7 @@ GameReferee.prototype._cellFitsWithinBoardBounds = function (cell, board) {
     return cell.x >= 0 && cell.x < board.size && cell.y >= 0 && cell.y < board.size;
 };
 
-GameReferee.prototype.makeMoveOnBoard = function (move, board) {
+GameReferee.prototype.tryToMakeMoveOnBoard = function (move, board) {
     var shiftDirection = this._getDirectionVectorBasedOn(move);
     var cellSequences = this._buildOrderedCellSequencesBasedOn(shiftDirection, board.size);
 

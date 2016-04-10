@@ -14,14 +14,19 @@ window.requestAnimationFrame(function () {
             "left"
         ];
         setTimeout(function () {
-            var prevBoard = board.clone();
-            actuator.drawPreviousGameBoard(prevBoard);
-
             try {
+                var prevBoard = board.clone();
+
                 var action = actions[Math.floor(Math.random() * actions.length)];
-                referee.makeMoveOnBoard(action, board);
+                referee.tryToMakeMoveOnBoard(action, board);
+
+                actuator.drawPreviousGameBoard(prevBoard);
                 actuator.drawActionArrow(action);
+                actuator.drawCurrentGameBoard(board);
+
                 referee.putRandomTileOn(board);
+
+                actuator.drawCurrentGameBoard(board);
 
             } catch (e) {
                 if (e.type !== "Illegal Move Exception") {
@@ -29,13 +34,11 @@ window.requestAnimationFrame(function () {
                 }
             }
 
-            actuator.drawCurrentGameBoard(board);
-
             if (!referee.saysGameIsOverOn(board)) {
                 scheduleNextMove(delay);
             }
         }, delay);
     };
 
-    scheduleNextMove(500);
+    scheduleNextMove(5000);
 });

@@ -115,7 +115,7 @@ describe("GameReferee", function () {
             board.putTileIntoCell(tile_3_2, {x: 3, y: 2});
             board.putTileIntoCell(tile_3_3, {x: 3, y: 3});
 
-            gameReferee.makeMoveOnBoard("up", board);
+            gameReferee.tryToMakeMoveOnBoard("up", board);
         });
 
         it("should shift the tile properly", function () {
@@ -182,7 +182,7 @@ describe("GameReferee", function () {
 
             expect(
                 function () {
-                    gameReferee.makeMoveOnBoard("left", board);
+                    gameReferee.tryToMakeMoveOnBoard("left", board);
                 }
             ).toThrow(
                 {
@@ -211,7 +211,7 @@ describe("GameReferee", function () {
 
             expect(
                 function () {
-                    gameReferee.makeMoveOnBoard("down", board);
+                    gameReferee.tryToMakeMoveOnBoard("down", board);
                 }
             ).toThrow(
                 {

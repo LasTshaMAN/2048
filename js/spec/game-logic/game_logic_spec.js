@@ -25,7 +25,7 @@ describe("GameLogic", function () {
         board.putTileIntoCell(null, {x: 3, y: 2});
         board.putTileIntoCell(new Tile(2), {x: 3, y: 3});
 
-        gameReferee.makeMoveOnBoard("down", board);
+        gameReferee.tryToMakeMoveOnBoard("down", board);
 
         expect(board.tileIn({x: 0, y: 0}).value).toEqual(2);
         expect(board.tileIn({x: 0, y: 1}).value).toEqual(8);
