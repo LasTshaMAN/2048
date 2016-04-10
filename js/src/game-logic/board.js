@@ -45,3 +45,11 @@ Board.prototype.forEachCell = function (callback) {
         }
     }
 };
+
+Board.prototype.clone = function () {
+    var boardState = JSON.parse(JSON.stringify(this));
+    var clone = new Board(boardState.size);
+    clone._cells = boardState._cells;
+    
+    return clone;
+};

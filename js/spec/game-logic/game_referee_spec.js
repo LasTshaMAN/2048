@@ -19,34 +19,59 @@ describe("GameReferee", function () {
         expect(amountOfOccupiedCells).toEqual(2);
     });
 
-    it("should say that game isn't over if board is empty", function () {
-        expect(gameReferee.saysGameIsOver(board)).toBeFalsy();
-    });
-
-    it("should say that game isn't over if board is half-full", function () {
-        gameReferee.setupNewGameOn(board);
-        gameReferee.putRandomTileOn(board);
-        gameReferee.putRandomTileOn(board);
-        gameReferee.putRandomTileOn(board);
-        expect(gameReferee.saysGameIsOver(board)).toBeFalsy();
-    });
-
-    it("should say that game isn't over if there are some tiles to merge on board", function () {
-        board.forEachCell(function (cell) {
-            var tile = new Tile(2);
-            board.putTileIntoCell(tile, cell);
+    describe("when checking whether the game is over", function () {
+        it("should say that game isn't over if board is empty", function () {
+            expect(gameReferee.saysGameIsOverOn(board)).toBeFalsy();
         });
-        expect(gameReferee.saysGameIsOver(board)).toBeFalsy();
-    });
-    
-    it("should say that game is over if board state can't be changed further", function () {
-        var value = 2;
-        board.forEachCell(function (cell) {
-            var tile = new Tile(value);
-            board.putTileIntoCell(tile, cell);
-            value *= 2;
+
+        it("should say that game isn't over if board is half-full", function () {
+            gameReferee.setupNewGameOn(board);
+            gameReferee.putRandomTileOn(board);
+            gameReferee.putRandomTileOn(board);
+            gameReferee.putRandomTileOn(board);
+            expect(gameReferee.saysGameIsOverOn(board)).toBeFalsy();
         });
-        expect(gameReferee.saysGameIsOver(board)).toBeTruthy();
+
+        describe("should say that game isn't over if there are some tiles to merge on board", function () {
+            it("case 1", function () {
+                board.forEachCell(function (cell) {
+                    var tile = new Tile(2);
+                    board.putTileIntoCell(tile, cell);
+                });
+                expect(gameReferee.saysGameIsOverOn(board)).toBeFalsy();
+            });
+
+            it("case 2", function () {
+                board.putTileIntoCell(new Tile(4), {x: 0, y: 0});
+                board.putTileIntoCell(new Tile(8), {x: 0, y: 1});
+                board.putTileIntoCell(new Tile(16), {x: 0, y: 2});
+                board.putTileIntoCell(new Tile(2), {x: 0, y: 3});
+                board.putTileIntoCell(new Tile(2), {x: 1, y: 0});
+                board.putTileIntoCell(new Tile(16), {x: 1, y: 1});
+                board.putTileIntoCell(new Tile(64), {x: 1, y: 2});
+                board.putTileIntoCell(new Tile(2), {x: 1, y: 3});
+                board.putTileIntoCell(new Tile(2), {x: 2, y: 0});
+                board.putTileIntoCell(new Tile(4), {x: 2, y: 1});
+                board.putTileIntoCell(new Tile(32), {x: 2, y: 2});
+                board.putTileIntoCell(new Tile(16), {x: 2, y: 3});
+                board.putTileIntoCell(new Tile(2), {x: 3, y: 0});
+                board.putTileIntoCell(new Tile(8), {x: 3, y: 1});
+                board.putTileIntoCell(new Tile(4), {x: 3, y: 2});
+                board.putTileIntoCell(new Tile(2), {x: 3, y: 3});
+
+                expect(gameReferee.saysGameIsOverOn(board)).toBeFalsy();
+            });
+        });
+
+        it("should say that game is over if board state can't be changed any further", function () {
+            var value = 2;
+            board.forEachCell(function (cell) {
+                var tile = new Tile(value);
+                board.putTileIntoCell(tile, cell);
+                value *= 2;
+            });
+            expect(gameReferee.saysGameIsOverOn(board)).toBeTruthy();
+        });
     });
 
     describe("when making 'up-move'", function () {
@@ -133,6 +158,66 @@ describe("GameReferee", function () {
             expect(board.occupied({x: 3, y: 1})).toBeFalsy();
             expect(board.occupied({x: 3, y: 2})).toBeFalsy();
             expect(board.occupied({x: 3, y: 3})).toBeFalsy();
+        });
+    });
+
+    describe("when trying to make illegal move should throw Illegal Move Exception", function () {
+        it("on full board", function () {
+            board.putTileIntoCell(new Tile(4), {x: 0, y: 0});
+            board.putTileIntoCell(new Tile(8), {x: 0, y: 1});
+            board.putTileIntoCell(new Tile(16), {x: 0, y: 2});
+            board.putTileIntoCell(new Tile(2), {x: 0, y: 3});
+            board.putTileIntoCell(new Tile(2), {x: 1, y: 0});
+            board.putTileIntoCell(new Tile(16), {x: 1, y: 1});
+            board.putTileIntoCell(new Tile(64), {x: 1, y: 2});
+            board.putTileIntoCell(new Tile(2), {x: 1, y: 3});
+            board.putTileIntoCell(new Tile(2), {x: 2, y: 0});
+            board.putTileIntoCell(new Tile(4), {x: 2, y: 1});
+            board.putTileIntoCell(new Tile(32), {x: 2, y: 2});
+            board.putTileIntoCell(new Tile(16), {x: 2, y: 3});
+            board.putTileIntoCell(new Tile(2), {x: 3, y: 0});
+            board.putTileIntoCell(new Tile(8), {x: 3, y: 1});
+            board.putTileIntoCell(new Tile(4), {x: 3, y: 2});
+            board.putTileIntoCell(new Tile(2), {x: 3, y: 3});
+
+            expect(
+                function () {
+                    gameReferee.makeMoveOnBoard("left", board);
+                }
+            ).toThrow(
+                {
+                    type: "Illegal Move Exception"
+                }
+            );
+        });
+
+        it("on half-empty board", function () {
+            board.putTileIntoCell(null, {x: 0, y: 0});
+            board.putTileIntoCell(null, {x: 0, y: 1});
+            board.putTileIntoCell(null, {x: 0, y: 2});
+            board.putTileIntoCell(null, {x: 0, y: 3});
+            board.putTileIntoCell(null, {x: 1, y: 0});
+            board.putTileIntoCell(null, {x: 1, y: 1});
+            board.putTileIntoCell(null, {x: 1, y: 2});
+            board.putTileIntoCell(null, {x: 1, y: 3});
+            board.putTileIntoCell(null, {x: 2, y: 0});
+            board.putTileIntoCell(null, {x: 2, y: 1});
+            board.putTileIntoCell(null, {x: 2, y: 2});
+            board.putTileIntoCell(null, {x: 2, y: 3});
+            board.putTileIntoCell(new Tile(2), {x: 3, y: 0});
+            board.putTileIntoCell(new Tile(4), {x: 3, y: 1});
+            board.putTileIntoCell(new Tile(8), {x: 3, y: 2});
+            board.putTileIntoCell(new Tile(4), {x: 3, y: 3});
+
+            expect(
+                function () {
+                    gameReferee.makeMoveOnBoard("down", board);
+                }
+            ).toThrow(
+                {
+                    type: "Illegal Move Exception"
+                }
+            );
         });
     });
 });

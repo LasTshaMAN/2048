@@ -32,7 +32,7 @@ GameReferee.prototype._availableCellsOn = function (board) {
     return result;
 };
 
-GameReferee.prototype.saysGameIsOver = function (board) {
+GameReferee.prototype.saysGameIsOverOn = function (board) {
     return !this._availableCellExistsOn(board) && !this._tileMergesArePossibleOn(board);
 };
 
@@ -90,11 +90,11 @@ GameReferee.prototype.makeMoveOnBoard = function (move, board) {
 
     var boardStateChanged = this._tryToChangeBoardStateAccordingTo(cellSequences, shiftDirection, board);
 
-    // if (!boardStateChanged) {
-    //     throw {
-    //         type: "Illegal Move Exception"
-    //     };
-    // }
+    if (!boardStateChanged) {
+        throw {
+            type: "Illegal Move Exception"
+        };
+    }
 };
 
 GameReferee.prototype._getDirectionVectorBasedOn = function (action) {
@@ -120,40 +120,40 @@ GameReferee.prototype._buildOrderedCellSequencesBasedOn = function (shiftDirecti
     if (shiftDirection.x === -1) {
         for (x = 0; x < boardSize; x++) {
             for (y = 0; y < boardSize; y++) {
-                result[y][x] = {
+                result[y].push({
                     x: x,
                     y: y
-                };
+                });
             }
         }
     }
     if (shiftDirection.x === 1) {
         for (x = boardSize - 1; x >= 0; x--) {
             for (y = 0; y < boardSize; y++) {
-                result[y][x] = {
+                result[y].push({
                     x: x,
                     y: y
-                };
+                });
             }
         }
     }
     if (shiftDirection.y === -1) {
         for (x = 0; x < boardSize; x++) {
             for (y = 0; y < boardSize; y++) {
-                result[x][y] = {
+                result[x].push({
                     x: x,
                     y: y
-                };
+                });
             }
         }
     }
     if (shiftDirection.y === 1) {
         for (x = 0; x < boardSize; x++) {
             for (y = boardSize - 1; y >= 0; y--) {
-                result[x][y] = {
+                result[x].push({
                     x: x,
                     y: y
-                };
+                });
             }
         }
     }
